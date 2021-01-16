@@ -34,6 +34,28 @@ function calculateWinner(squares) {
     return null;
 
 }
+var rowColDict = {
+    0 : [0,0],
+    1 : [0,1],
+    2 : [0,2],
+    3 : [1,0],
+    4 : [1,1],
+    5 : [1,2],
+    6 : [2,0],
+    7 : [2,1],
+    8 : [2,2]
+};
+
+function squareToRowCol(i) {
+//    take in numeric index of the squares array and return row and column
+    if (i == null) {
+        return
+    } else {
+        return (
+            rowColDict[i][0] + ' ' + rowColDict[i][1]
+        )
+    }
+}
 
 class Board extends React.Component {
     renderSquare(i) {
@@ -77,6 +99,7 @@ class Game extends React.Component {
             }],
             stepNumber: 0,
             xIsNext: true,
+            lastMove: null
         };
     }
 
@@ -87,7 +110,7 @@ class Game extends React.Component {
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                'Go to move #' + move :
+                'Go to move # ' + move:
                 'Go to game start';
             return (
                 <li key={move}>
@@ -103,6 +126,9 @@ class Game extends React.Component {
             status = 'Next player ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
+        let log;
+        log = squareToRowCol(this.state.lastMove)
+
         return (
             <div className="game">
                 <div className="game-board">
@@ -114,6 +140,9 @@ class Game extends React.Component {
                 <div className="game-info">
                     <div>{status}</div>
                     <ol>{moves}</ol>
+                </div>
+                <div className="log-info">
+                    {log}
                 </div>
             </div>
         );
@@ -139,6 +168,7 @@ class Game extends React.Component {
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
+            lastMove: i,
         });
     }
 }
