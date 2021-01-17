@@ -52,7 +52,7 @@ function squareToRowCol(i) {
         return
     } else {
         return (
-            rowColDict[i][0] + ' ' + rowColDict[i][1]
+            rowColDict[i]
         )
     }
 }
@@ -96,10 +96,11 @@ class Game extends React.Component {
         this.state = {
             history: [{
                 squares: Array(9).fill(null),
+                lastMove: null
             }],
             stepNumber: 0,
             xIsNext: true,
-            lastMove: null
+
         };
     }
 
@@ -110,7 +111,7 @@ class Game extends React.Component {
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                'Go to move # ' + move:
+                'Go to move # ' + move + ' (' + squareToRowCol(history[move].lastMove) + ')':
                 'Go to game start';
             return (
                 <li key={move}>
@@ -165,10 +166,11 @@ class Game extends React.Component {
         this.setState({
             history: history.concat([{
                 squares: squares,
+                lastMove: i,
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
-            lastMove: i,
+
         });
     }
 }
