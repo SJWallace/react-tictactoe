@@ -115,12 +115,7 @@ class Game extends React.Component {
         // const winner = calculateWinner(current.squares);
         let winner = null
         let status;
-        if (winner) {
-            status = 'Winner: ' + winner;
-        } else {
-            status = 'Next player ' + (this.state.xIsNext ? 'X' : 'O');
-        }
-
+        status = winner ? 'Winner: ' + winner : 'Next player ' + (this.state.xIsNext ? 'X' : 'O');
         let log;
         log = current.lastMove
 
@@ -158,14 +153,14 @@ class Game extends React.Component {
     handleClick(row,col) {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
-        const squares1 = current.squares.slice();
-        if (squares1[row][col]) {
+        const squares = JSON.parse(JSON.stringify(current.squares));
+        if (squares[row][col]) {
             return;
         }
-        squares1[row][col] = this.state.xIsNext ? 'X' : 'O';
+        squares[row][col] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
-                squares: squares1,
+                squares: squares,
                 lastMove: [row,col],
             }]),
             stepNumber: history.length,
