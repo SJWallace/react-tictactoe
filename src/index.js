@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 function Square(props) {
@@ -34,7 +33,7 @@ function calculateWinner(squares) {
     return null;
 
 }
-var rowColDict = {
+const rowColDict = {
     0 : [0,0],
     1 : [0,1],
     2 : [0,2],
@@ -49,7 +48,7 @@ var rowColDict = {
 function squareToRowCol(i) {
 //    take in numeric index of the squares array and return row and column
     if (i == null) {
-        return
+        return null
     } else {
         return (
             rowColDict[i]
@@ -90,6 +89,34 @@ class Board extends React.Component {
     }
 }
 
+class MoveList extends React.Component {
+    render() {
+        const history = this.props.history
+        const current = this.props.currentStep
+        const move2 = history.map((step, move) => {
+            const desc = move ?
+                'Go to move # ' + move + ' (' + squareToRowCol(history[move].lastMove) + ')' :
+                'Go to game start';
+            if (move === current) {
+                return (
+                    <li key={move}>
+                       <button onClick={() => this.props.moveListJumpTo(move)}><b>{desc}</b></button>
+                    </li>
+                )
+            } else {
+                return (
+                    <li key={move}>
+                        <button onClick={() => this.props.moveListJumpTo(move)}>{desc}</button>
+                    </li>
+                );
+            }
+        })
+        return (
+            move2.map(move => <div>{move}</div>)
+        )
+    }
+}
+
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -109,17 +136,6 @@ class Game extends React.Component {
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
-        const moves = history.map((step, move) => {
-            const desc = move ?
-                'Go to move # ' + move + ' (' + squareToRowCol(history[move].lastMove) + ')':
-                'Go to game start';
-            return (
-                <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
-                </li>
-            );
-        });
-
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
@@ -128,7 +144,7 @@ class Game extends React.Component {
         }
 
         let log;
-        log = squareToRowCol(this.state.lastMove)
+        log = squareToRowCol(current.lastMove)
 
         return (
             <div className="game">
@@ -140,7 +156,14 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{moves}</ol>
+                    <ol>
+                    <MoveList
+                        history={this.state.history}
+                        currentStep={this.state.stepNumber}
+                        onClick={(i) => this.handleClick(i)}
+                        moveListJumpTo={(i) => this.jumpTo(i)}
+                        />
+                    </ol>
                 </div>
                 <div className="log-info">
                     {log}
